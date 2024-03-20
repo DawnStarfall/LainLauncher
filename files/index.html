@@ -10,15 +10,19 @@
     <ul id="filesList"></ul>
 
     <script>
-        // Fetch the list of files from the server
+        // Fetch the HTML content of the /files/ directory
         fetch('https://dawnstarfall.github.io/LainLauncher/files/')
             .then(response => response.text())
             .then(html => {
-                // Parse the HTML response to extract file names
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const links = Array.from(doc.querySelectorAll('a'));
-                const fileNames = links.map(link => link.textContent.trim());
+                // Create a temporary element to parse the HTML content
+                const tempElement = document.createElement('div');
+                tempElement.innerHTML = html;
+
+                // Find all anchor elements (links) within the temp element
+                const links = tempElement.querySelectorAll('a');
+
+                // Extract file names from the href attribute of the links
+                const fileNames = Array.from(links).map(link => link.href.split('/').pop());
 
                 // Generate HTML for the index page
                 const filesList = document.getElementById('filesList');
