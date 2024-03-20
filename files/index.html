@@ -10,32 +10,18 @@
     <ul id="filesList"></ul>
 
     <script>
-        // Fetch the HTML content of the /files/ directory
-        fetch('https://dawnstarfall.github.io/LainLauncher/files/')
-            .then(response => response.text())
-            .then(html => {
-                // Create a temporary element to parse the HTML content
-                const tempElement = document.createElement('div');
-                tempElement.innerHTML = html;
+      (async () => {
+        const response = await fetch('https://api.github.com/repos/dawnstarfall/LainLauncher/contents/');
+        const data = await response.json();
+        let htmlString = '<ul>';
+        
+        for (let file of data) {
+          htmlString += `<li><a href="${file.path}">${file.name}</a></li>`;
+        }
 
-                // Find all anchor elements (links) within the temp element
-                const links = tempElement.querySelectorAll('a');
-
-                // Extract file names from the href attribute of the links
-                const fileNames = Array.from(links).map(link => link.href.split('/').pop());
-
-                // Generate HTML for the index page
-                const filesList = document.getElementById('filesList');
-                fileNames.forEach(fileName => {
-                    const listItem = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.textContent = fileName;
-                    link.href = `https://api.github.com/repos/DawnStarfall/LainLauncher/files/${fileName}`;
-                    listItem.appendChild(link);
-                    filesList.appendChild(listItem);
-                });
-            })
-            .catch(error => console.error('Error fetching files:', error));
+        htmlString += '</ul>';
+        document.getElementsByTagName('body')[0].innerHTML = htmlString;
+      })()
     </script>
 </body>
 </html>
